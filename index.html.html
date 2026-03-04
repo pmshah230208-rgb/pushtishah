@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>શ્રી વિઠ્ઠલેશ પુષ્ટિ પાઠશાળા - ડેશબોર્ડ</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 🎨 Enhanced Animated Background */
+    .gradient-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF8C00 50%, #FF6B00 75%, #FF4500 100%);
+      opacity: 0.3;
+      z-index: -2;
+      animation: gradientShift 15s ease infinite;
+    }
+
+    .gradient-layer:nth-child(2) {
+      background: linear-gradient(135deg, #FF4500 0%, #FF6B00 25%, #FF8C00 50%, #FFA500 75%, #FFD700 100%);
+      opacity: 0.2;
+      animation: gradientShift 20s ease reverse infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { transform: translateX(-100%) translateY(-100%); }
+      50% { transform: translateX(100%) translateY(100%); }
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(-100px);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-header {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,140,0,0.1) 0%, transparent 70%);
+      animation: rotate 30s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+<div id="visitorCount" style="
+  text-align:center;
+  font-weight:bold;
+  font-size:18px;
+  margin:15px 0;
+  color:#FF6B00;">
+  👥 Total Visitors: Loading...
+</div>
+    .header-content {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 40px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .temple-info {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    /* 🖼️ TEMPLE IMAGE - NO CIRCLE */
+    .temple-image {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-block;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    .temple-image:hover {
+      transform: translateY(-8px) scale(1.05);
+      filter: brightness(1.1) drop-shadow(0 20px 40px rgba(255, 140, 0, 0.3));
+    }
+
+    .temple-image img {
+      width: clamp(120px, 15vw, 180px);
+      height: clamp(120px, 15vw, 180px);
+      object-fit: cover;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: block;
+    }
+
+    .temple-image:hover img {
+      transform: scale(1.1);
+      filter: brightness(1.1);
+    }
+
+    /* Fallback icon when image fails */
+    .temple-image .fallback-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(40px, 8vw, 60px);
+      color: #FF8C00;
+      display: none;
+    }
+
+    .temple-image.image-error .fallback-icon {
+      display: block;
+    }
+
+    .temple-image.image-error img {
+      display: none;
+    }
+
+    .temple-text h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 700;
+      background: linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: clamp(10px, 2vw, 15px);
+      letter-spacing: -0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .temple-text h1:hover {
+      transform: translateX(5px);
+      filter: brightness(1.1);
+    }
+
+    .temple-text .subtitle {
+      display: flex;
+      gap: clamp(10px, 2vw, 20px);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .temple-text .subtitle span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 20px);
+      background: linear-gradient(135deg, #FFF5E6 0%, #FFE4CC 100%);
+      border-radius: 25px;
+      font-weight: 500;
+      font-size: clamp(13px, 2vw, 16px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .temple-text .subtitle span::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 140, 0, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.5s ease;
+    }
+
+    .temple-text .subtitle span:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+
+    .temple-text .subtitle span:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(255, 140, 0, 0.25);
+    }
+
+    .temple-text .subtitle span i {
+      transition: all 0.3s ease;
+    }
+
+    .temple-text .subtitle span:hover i {
+      transform: rotate(15deg) scale(1.2);
+    }
+
+    .main-container {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.5) inset;
+      overflow: hidden;
+      position: relative;
+      transform: translateZ(0);
+    }
+
+    .nav-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      background: linear-gradient(135deg, rgba(255,245,230,0.9) 0%, rgba(255,228,204,0.9) 100%);
+      padding: clamp(15px, 3vw, 20px);
+      gap: clamp(10px, 2vw, 15px);
+      border-bottom: 2px solid rgba(255, 140, 0, 0.2);
+    }
+
+    .nav-tab {
+      padding: clamp(12px, 2.5vw, 18px);
+      background: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #666;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: clamp(13px, 2vw, 15px);
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .nav-tab::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.5s ease;
+      z-index: 0;
+    }
+
+    .nav-tab:hover::after {
+      width: 120%;
+      height: 120%;
+    }
+
+    .nav-tab:hover {
+      transform: translateY(-5px) translateZ(10px);
+      box-shadow: 0 15px 35px rgba(255, 140, 0, 0.25);
+    }
+
+    .nav-tab.active {
+      background: linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%);
+      color: white;
+      box-shadow: 0 15px 40px rgba(255, 140, 0, 0.35);
+      transform: translateY(-3px) translateZ(15px);
+    }
+
+    .nav-tab i {
+      font-size: clamp(16px, 3vw, 20px);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-tab:hover i {
+      transform: scale(1.3) rotate(10deg);
+    }
+
+    .nav-tab span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-content {
+      padding: clamp(30px, 5vw, 50px);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: clamp(20px, 4vw, 30px);
+      margin-top: clamp(20px, 4vw, 30px);
+    }
+
+    .option-card {
+      background: linear-gradient(135deg, rgba(255,245,230,0.9) 0%, rgba(255,228,204,0.9) 100%);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: clamp(35px, 6vw, 50px);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid rgba(255, 183, 77, 0.3);
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .option-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #FF8C00, #FF6B00, #FFD700, #FF8C00);
+      border-radius: 30px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+      background-size: 400% 400%;
+      animation: borderGlow 3s ease infinite;
+    }
+
+    @keyframes borderGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .option-card:hover::before {
+      opacity: 1;
+    }
+
+    .option-card:hover {
+      transform: translateY(-15px) rotateX(5deg) scale(1.03);
+      box-shadow: 0 30px 60px rgba(255, 140, 0, 0.3);
+    }
+
+    .option-card:active {
+      transform: translateY(-8px) rotateX(2deg) scale(1.01);
+    }
+
+    .option-icon {
+      width: clamp(80px, 12vw, 100px);
+      height: clamp(80px, 12vw, 100px);
+      background: linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto clamp(20px, 4vw, 30px);
+      font-size: clamp(30px, 5vw, 40px);
+      color: white;
+      box-shadow: 0 15px 35px rgba(255, 140, 0, 0.3);
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .option-card:hover .option-icon {
+      transform: scale(1.15) rotateY(10deg) rotateX(10deg);
+      box-shadow: 0 25px 50px rgba(255, 140, 0, 0.4);
+    }
+
+    .option-icon::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      background: linear-gradient(45deg, #FFD700, #FF8C00, #FF6B00, #FFD700);
+      border-radius: 30px;
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s ease;
+      animation: iconGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes iconGlow {
+      0%, 100% { opacity: 0; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+
+    .option-card:hover .option-icon::after {
+      opacity: 1;
+    }
+
+    .option-title {
+      font-size: clamp(20px, 3.5vw, 26px);
+      font-weight: 600;
+      background: linear-gradient(135deg, #333 0%, #666 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: clamp(10px, 2vw, 15px);
+      transition: all 0.3s ease;
+    }
+
+    .option-card:hover .option-title {
+      transform: translateY(-3px) scale(1.05);
+      filter: brightness(1.2);
+    }
+
+    .option-desc {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #777;
+      line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+
+    .option-card:hover .option-desc {
+      color: #555;
+      transform: translateY(-2px);
+    }
+
+    .dashboard-footer {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      color: #666;
+      padding: clamp(20px, 4vw, 30px);
+      text-align: center;
+      border-radius: 0 0 30px 30px;
+      margin-top: 20px;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+      font-size: clamp(13px, 2vw, 15px);
+    }
+
+    /* 📱 Enhanced Responsive Breakpoints */
+    @media (max-width: 1200px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .temple-info {
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      .temple-text .subtitle {
+        justify-content: center;
+      }
+
+      .nav-tabs {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .dashboard-header {
+        border-radius: 20px;
+        padding: 15px;
+      }
+
+      .main-container {
+        border-radius: 20px;
+      }
+
+      .option-card {
+        border-radius: 20px;
+        padding: 25px;
+      }
+    }
+
+    /* Loading animation */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeOut 0.5s ease 1.5s forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .loading-spinner {
+      width: 70px;
+      height: 70px;
+      border: 5px solid rgba(255,255,255,0.3);
+      border-top: 5px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 30px rgba(255,255,255,0.5);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+      .option-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .nav-tab:hover {
+        transform: translateY(-2px);
+      }
+    }
+
+    /* Image instruction tooltip */
+    .image-instruction {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .temple-image:hover .image-instruction {
+      opacity: 1;
+    }
+
+    /* Image preview modal */
+    .image-preview-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      max-width: 90%;
+      max-height: 90%;
+      position: relative;
+      animation: zoomIn 0.3s ease;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      transform: scale(1.2);
+      color: #FF8C00;
+    }
+
+    .modal-info {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .modal-info h3 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .modal-info p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <script>
+fetch('https://api.countapi.xyz/hit/bethakji-map/visits')
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById("visitorCount").innerText =
+      "👥 Total Visitors: " + data.value;
+  })
+  .catch(error => {
+    document.getElementById("visitorCount").innerText =
+      "👥 Visitor counter unavailable";
+  });
+</script>
+  <!-- Enhanced Animated Background Layers -->
+  <div class="gradient-layer"></div>
+  <div class="gradient-layer"></div>
+  <div class="particles" id="particles"></div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <div class="container">
+    <header class="dashboard-header">
+      <div class="header-content">
+        <div class="temple-info">
+          <!-- 🖼️ TEMPLE IMAGE - NO CIRCLE -->
+          <div class="temple-image">
+            <div class="image-instruction">Click to view full image</div>
+            <img src="https://pushtiras.in/wp-content/uploads/2023/04/Shree-Mahaprabhuji-1.jpg" 
+                 alt="શ્રી મહાપ્રભુજી" 
+                 title="શ્રી મહાપ્રભુજી - પુષ્ટિ રસ">
+            <i class="fas fa-om fallback-icon"></i>
+          </div>
+          <div class="temple-text">
+            <h1>શ્રી વિઠ્ઠલેશ પુષ્ટિ પાઠશાળા</h1>
+            <div class="subtitle">
+              <span><i class="fas fa-map-marker-alt"></i> કાંદિવલી પશ્ચિમ, મુંબઈ</span>
+              <span>શ્રી મહાપ્રભુજી બેઠકજી</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-container">
+      <div class="nav-tabs">
+        <button class="nav-tab active">
+          <i class="fas fa-home"></i>
+          <span>મુખ્ય પૃષ્ઠ</span>
+        </button>
+        <button class="nav-tab">
+          <i class="fas fa-map"></i>
+          <span>નકશો</span>
+        </button>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="options-grid">
+          <div class="option-card">
+            <div class="option-icon">
+            <a href="orginal.html">  <i class="fas fa-map-marked-alt"></i></a>
+            </div>
+            <div class="option-title"><a href="orginal.html">નકશો</a></div>
+            <div class="option-desc"><a href="orginal.html">સ્થાન અને માર્ગ માહિતી </a>             
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="dashboard-footer">
+      <div>© 2024 શ્રી વિઠ્ઠલેશ પુષ્ટિ પાઠશાળા | કાંદિવલી પશ્ચિમ, મુંબઈ</div>
+    </footer>
+  </div>
+
+  <!-- Image Preview Modal -->
+  <div id="imageModal" class="image-preview-modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <img id="modalImage" src="" alt="શ્રી મહાપ્રભુજી">
+      <div class="modal-info">
+        <h3>શ્રી મહાપ્રભુજી</h3>
+        <p>પુષ્ટિ માર્ગના સંસ્થાપક | વલ્લભ સંપ્રદાય</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 🎨 Enhanced Animated Background
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    createParticles();
+
+    // 🎯 Enhanced Smooth Micro-interactions
+    // Tab switching with advanced animations
+    document.querySelectorAll('.nav-tab').forEach(function(tab) {
+      tab.addEventListener('click', function(e) {
+        // Create ripple effect
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+
+        // Switch active tab
+        document.querySelectorAll('.nav-tab').forEach(t => {
+          t.classList.remove('active');
+        });
+        this.classList.add('active');
+      });
+    });
+
+    // Add ripple styles
+    const rippleStyle = document.createElement('style');
+    rippleStyle.textContent = `
+      .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        transform: scale(0);
+        animation: rippleEffect 0.6s ease-out;
+        pointer-events: none;
+      }
+      @keyframes rippleEffect {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(rippleStyle);
+
+    // Enhanced card interactions
+    document.querySelectorAll('.option-card').forEach(function(card) {
+      card.addEventListener('click', function(e) {
+        // Create multiple ripples
+        for (let i = 0; i < 3; i++) {
+          setTimeout(() => {
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = `rgba(255, 140, 0, ${0.3 - i * 0.1})`;
+            ripple.style.width = ripple.style.height = (100 + i * 50) + 'px';
+            ripple.style.top = (e.clientY - this.offsetTop - (50 + i * 25)) + 'px';
+            ripple.style.left = (e.clientX - this.offsetLeft - (50 + i * 25)) + 'px';
+            ripple.style.animation = `rippleEffect ${0.6 + i * 0.2}s ease-out`;
+            ripple.style.pointerEvents = 'none';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+              ripple.remove();
+            }, 600 + i * 200);
+          }, i * 100);
+        }
+      });
+
+      // 3D tilt effect
+      card.addEventListener('mousemove', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 15;
+        const rotateY = (centerX - x) / 15;
+        
+        this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px) scale(1.02)`;
+      });
+
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0) scale(1)';
+      });
+    });
+
+    // 🖼️ Image Modal Functionality
+    const templeImage = document.querySelector('.temple-image');
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const modalClose = document.querySelector('.modal-close');
+    <a href="orginal.html">const logoImage = templeImage.querySelector('img');</a>
+
+    // Open modal when image is clicked
+    templeImage.addEventListener('click', function(e) {
+      modal.style.display = 'flex';
+      modalImg.src = logoImage.src;
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Close modal
+    modalClose.addEventListener('click', function() {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close modal when clicking outside image
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.style.display === 'flex') {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // Image micro-interaction
+    templeImage.addEventListener('mouseenter', function() {
+      this.style.cursor = 'pointer';
+    });
+
+    // 🖼️ IMAGE LOADING AND FALLBACK
+    logoImage.addEventListener('load', function() {
+      console.log('✅ Image loaded successfully!');
+      this.style.opacity = '0';
+      setTimeout(() => {
+        this.style.transition = 'opacity 0.5s ease';
+        this.style.opacity = '1';
+      }, 100);
+    });
+
+    logoImage.addEventListener('error', function() {
+      console.log('❌ Image failed to load');
+      console.log('📝 Showing fallback icon');
+      
+      // Add error class to show fallback
+      templeImage.classList.add('image-error');
+      
+      // Try alternative images
+      const alternativeImages = [
+        'https://picsum.photos/seed/mahaprabhuji/200/200.jpg',
+        'https://picsum.photos/seed/temple/200/200.jpg',
+        'https://via.placeholder.com/200x200/FF8C00/FFFFFF?text=શ્રી+મહાપ્રભુજી'
+      ];
+      
+      let attempt = 0;
+      function tryNextImage() {
+        if (attempt < alternativeImages.length) {
+          console.log(`🔄 Trying alternative image ${attempt + 1}`);
+          this.src = alternativeImages[attempt];
+          attempt++;
+        } else {
+          console.log('🚫 All image attempts failed, using fallback icon');
+        }
+      }
+      
+      this.addEventListener('error', tryNextImage);
+      tryNextImage.call(this);
+    });
+
+    // 📱 Responsive touch optimizations
+    if ('ontouchstart' in window) {
+      document.querySelectorAll('.option-card, .nav-tab').forEach(element => {
+        element.addEventListener('touchstart', function() {
+          this.style.transform = 'scale(0.98)';
+        });
+        element.addEventListener('touchend', function() {
+          this.style.transform = '';
+        });
+      });
+    }
+
+    // Remove loading overlay
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        document.querySelector('.loading-overlay').style.display = 'none';
+      }, 2000);
+    });
+
+    // Dynamic viewport height fix for mobile
+    function setViewportHeight() {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+
+    setViewportHeight();
+    window.addEventListener('resize', setViewportHeight);
+    window.addEventListener('orientationchange', setViewportHeight);
+
+    // Smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // Performance optimization - reduce motion on low-end devices
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('*').forEach(el => {
+        el.style.animation = 'none';
+        el.style.transition = 'none';
+      });
+    }
+
+    // Add keyboard navigation for tabs
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const tabs = Array.from(document.querySelectorAll('.nav-tab'));
+        const activeTab = document.querySelector('.nav-tab.active');
+        const currentIndex = tabs.indexOf(activeTab);
+        
+        let newIndex;
+        if (e.key === 'ArrowLeft') {
+          newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+        } else {
+          newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+        }
+        
+        tabs[newIndex].click();
+      }
+    });
+
+    // 🖼️ ENSURE IMAGE IS VISIBLE
+    // Force image display after page load
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        if (logoImage.complete && logoImage.naturalHeight !== 0) {
+          console.log('✅ Image is properly loaded and displayed');
+          logoImage.style.opacity = '1';
+        } else {
+          console.log('⚠️ Image may not be loading properly');
+          // Try to reload the image
+          logoImage.src = logoImage.src + '?t=' + new Date().getTime();
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

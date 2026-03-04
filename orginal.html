@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bethakji Journey Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 10px;
+    }
+
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .map-container {
+      height: calc(100vh - 80px);
+      position: relative;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Simple Marker Styles */
+    .simple-marker {
+      background: #FF6B35;
+      border: 3px solid white;
+      border-radius: 50%;
+      color: white;
+      font-weight: bold;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .simple-marker.active {
+      background: #4CAF50;
+      transform: scale(1.2);
+      box-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
+    }
+
+    /* Control Buttons */
+    .control-panel {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      display: flex;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .control-btn {
+      background: #FF6B35;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-btn:hover {
+      background: #e55a2b;
+      transform: translateY(-2px);
+    }
+
+    .control-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .control-btn.play {
+      background: #4CAF50;
+    }
+
+    .control-btn.reset {
+      background: #f44336;
+    }
+
+    /* Info Display */
+    .info-display {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, #FFF9C4 0%, #FFEB3B 100%);
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      z-index: 1000;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .control-panel {
+        bottom: 10px;
+        padding: 10px;
+        gap: 5px;
+      }
+
+      .control-btn {
+        padding: 10px 15px;
+        font-size: 14px;
+      }
+
+      .info-display {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <h2>📍 Bethakji Journey Map</h2>
+    
+    <div class="map-container">
+      <div id="map"></div>
+      
+      <div class="info-display" id="infoDisplay">
+        🚶 Starting at 1st Bethakji - Govind Ghat Gokul
+      </div>
+      
+      <div class="control-panel">
+        <button id="prevBtn" class="control-btn" disabled>
+          <i class="fas fa-chevron-left"></i> Previous
+        </button>
+        <button id="nextBtn" class="control-btn">
+          Next <i class="fas fa-chevron-right"></i>
+        </button>
+        <button id="playBtn" class="control-btn play">
+          <i class="fas fa-play"></i> Auto Play
+        </button>
+        <button id="resetBtn" class="control-btn reset">
+          <i class="fas fa-redo"></i> Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize map
+    var map = L.map('map').setView([27.5, 77.7], 7);
+
+    // Add tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // ACCURATE BETHAKJI LOCATIONS
+    var bethakjiLocations = [
+      { id: 1, name: "1st Bethakji", location: "Govind Ghat Gokul", coords: [27.5885, 77.6708] },
+      { id: 5, name: "5th Bethakji", location: "Vishram Ghat, Mathura", coords: [27.4964, 77.6737] },
+      { id: 8, name: "8th Bethakji", location: "Bahulavan, Mathura", coords: [27.5359, 77.6435] },
+      { id: 11, name: "11th Bethakji", location: "Chandrasarovar", coords: [27.5530, 77.5980] },
+      { id: 14, name: "14th Bethakji", location: "Jatipura Sundarshila", coords: [27.5145, 77.6569] },
+      { id: 16, name: "16th Bethakji", location: "Kamvan", coords: [27.6320, 77.2930] },
+      { id: 17, name: "17th Bethakji", location: "Gaharvar Van", coords: [27.5850, 77.6450] },
+      { id: 19, name: "19th Bethakji", location: "Nandgaam", coords: [27.6950, 77.7260] },
+      { id: 20, name: "20th Bethakji", location: "Kokilavan", coords: [27.6030, 77.5050] },
+      { id: 24, name: "24th Bethakji", location: "Chitrakut", coords: [24.9100, 81.1550] },
+      { id: 25, name: "25th Bethakji", location: "Ayodhya", coords: [26.7956, 82.1918] },
+      { id: 27, name: "27th Bethakji", location: "Varanasi", coords: [25.3176, 82.9739] },
+      { id: 32, name: "32nd Bethakji", location: "Pratagya Sthan Champaran", coords: [21.7719, 81.6144] },
+      { id: 33, name: "33rd Bethakji", location: "Chati Bethakji Champaran", coords: [21.7719, 81.6344] }
+    ];
+
+    // Create simple icon
+    function createSimpleIcon(number, isActive = false) {
+      return L.divIcon({
+        className: 'simple-marker' + (isActive ? ' active' : ''),
+        html: number,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+    }
+
+    // Add markers to map
+    var markers = {};
+    bethakjiLocations.forEach(function(bethakji) {
+      var marker = L.marker(bethakji.coords, {
+        icon: createSimpleIcon(bethakji.id)
+      }).addTo(map);
+      
+      // Create popup content
+      var popupContent = `<div style="text-align: center; padding: 10px;">
+            <h3 style="color: #FF6B35; margin: 0 0 5px 0;">${bethakji.name}</h3>
+            <p style="font-weight: bold; margin: 0; ${bethakji.id === 1 ? 'color: #1a237e;' : ''}">${bethakji.location}</p>
+          </div>`;
+      
+      marker.bindPopup(popupContent);
+      markers[bethakji.id] = marker;
+    });
+
+    // Draw paths between locations
+    for (var i = 0; i < bethakjiLocations.length - 1; i++) {
+      L.polyline([
+        bethakjiLocations[i].coords,
+        bethakjiLocations[i + 1].coords
+      ], {
+        color: '#FF6B35',
+        weight: 3,
+        opacity: 0.7,
+        dashArray: '10, 5'
+      }).addTo(map);
+    }
+
+    // Current state
+    var currentIndex = 0;
+    var isPlaying = false;
+    var playInterval = null;
+
+    // Update display
+    function updateDisplay() {
+      var current = bethakjiLocations[currentIndex];
+      
+      // Update markers
+      Object.keys(markers).forEach(function(id) {
+        markers[id].setIcon(createSimpleIcon(id, parseInt(id) === current.id));
+      });
+      
+      // Update buttons
+      document.getElementById('prevBtn').disabled = currentIndex === 0;
+      document.getElementById('nextBtn').disabled = currentIndex === bethakjiLocations.length - 1;
+      
+      // Update info
+      document.getElementById('infoDisplay').innerHTML = 
+        `📍 Currently at: ${current.name} - ${current.location}`;
+      
+      // Pan to current location
+      map.panTo(current.coords);
+    }
+
+    // Control functions
+    document.getElementById('nextBtn').addEventListener('click', function() {
+      if (currentIndex < bethakjiLocations.length - 1) {
+        currentIndex++;
+        updateDisplay();
+      }
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', function() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateDisplay();
+      }
+    });
+
+    document.getElementById('playBtn').addEventListener('click', function() {
+      if (isPlaying) {
+        isPlaying = false;
+        clearInterval(playInterval);
+        this.innerHTML = '<i class="fas fa-play"></i> Auto Play';
+      } else {
+        isPlaying = true;
+        this.innerHTML = '<i class="fas fa-pause"></i> Pause';
+        playInterval = setInterval(function() {
+          if (currentIndex < bethakjiLocations.length - 1) {
+            currentIndex++;
+            updateDisplay();
+          } else {
+            clearInterval(playInterval);
+            isPlaying = false;
+            document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i> Auto Play';
+          }
+        }, 2000);
+      }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', function() {
+      currentIndex = 0;
+      isPlaying = false;
+      clearInterval(playInterval);
+      document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i> Auto Play';
+      updateDisplay();
+      map.setView([27.5, 77.7], 7);
+    });
+
+    // Initialize
+    updateDisplay();
+  </script>
+</body>
+</html>
